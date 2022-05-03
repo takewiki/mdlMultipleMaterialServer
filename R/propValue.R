@@ -50,6 +50,75 @@ propValue_query <- function(conn=tsda::conn_rds('cprds')) {
 }
 
 
+#' 属性选项查询
+#'
+#' @param conn 连接
+#' @param FPrdCategoryNumber 产品大类代码
+#' @param FPropCategoryNumber 产品属性代码
+#'
+#' @return 返回值
+#' @export
+#'
+#' @examples
+#' propValue_queryDetail()
+propValue_queryDetail <- function(conn=tsda::conn_rds('cprds'),
+                                  FPrdCategoryNumber ='1.1.1.001',
+                                  FPropCategoryNumber ='AF'
+                                  ) {
+
+  sql <- paste0("SELECT
+      FPropNumber
+      ,FPropName
+
+  FROM rds_mtrl_propValueConfig
+  where FPrdCategoryNumber ='",FPrdCategoryNumber,"' and FPropCategoryNumber ='",FPropCategoryNumber,"'   and FDeleted = 0
+  order by FSeq")
+
+  data = tsda::sql_select(conn,sql)
+  ncount =nrow(data)
+  if(ncount >0){
+    res = tsdo::vect_as_list(data$FPropNumber)
+    names(res) <- data$FPropName
+  }else
+  {
+    res= list('')
+    names(res) <- '无选项,请联系管理员'
+  }
+  return(res)
+
+}
+
+
+#' 返回选项值
+#'
+#' @param conn 连接
+#' @param FPropNumber 选项代码
+#'
+#' @return 返回值
+#' @export
+#'
+#' @examples
+#' propValue_queryByNumber()
+propValue_queryByNumber <- function(conn=tsda::conn_rds('cprds'),FPropNumber ='C000009') {
+  if(FPropNumber == ''){
+    res =''
+  }else{
+    sql <- paste0("  select  FPropName from  rds_mtrl_propValue
+  where FPropNumber ='",FPropNumber,"'")
+    data = tsda::sql_select(conn,sql)
+    ncount = nrow(data)
+    if(ncount >0){
+      res = data$FPropName[1]
+    }else{
+      res =''
+    }
+  }
+
+
+  return(res)
+
+}
+
 
 
 

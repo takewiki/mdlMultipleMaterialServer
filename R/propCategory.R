@@ -44,6 +44,28 @@ propCategory_query <- function(conn=tsda::conn_rds('cprds')) {
 }
 
 
+#' 属性类别查询
+#'
+#' @param conn 连接
+#'
+#' @return 返回值
+#'
+#' @examples
+#' propCategory_queryDetail()
+propCategory_queryDetail <- function(conn=tsda::conn_rds('cprds'),FPrdCategoryNumber ='1.1.1.001') {
+
+  sql <- paste0("   select   FPrdCategoryNumber,FPrdCategoryName,FPropCategoryNumber,FPropCategoryName  from rds_mtrl_propCategoryConfig
+  where FPrdCategoryNumber ='",FPrdCategoryNumber,"' and FDeleted =0
+  order by FSeq")
+  data = tsda::sql_select(conn,sql)
+  return(data)
+
+}
+
+
+
+
+
 
 
 

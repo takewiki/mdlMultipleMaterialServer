@@ -48,6 +48,28 @@ prdGroup_query <- function(conn=tsda::conn_rds('cprds')) {
 
 }
 
+#' 产品大类查询
+#'
+#' @param conn 连接
+#'
+#' @return 返回值
+#'
+#' @examples
+#' prdGroup_query()
+prdGroup_queryDetail <- function(conn=tsda::conn_rds('cprds'),FPrdCategoryFNumber ='1.1.1.006') {
+
+  sql <- paste0("SELECT
+      [FPrdGroupNumber] as 产品分组代码
+      ,[FPrdGroupName] as 产品分组名称
+
+  FROM [cprds].[dbo].[rds_mtrl_prdGroup]
+   where FPrdCategoryFNumber ='",FPrdCategoryFNumber,"'
+   and Fdeleted =0  and Fdetail =1")
+  data = tsda::sql_select(conn,sql)
+  return(data)
+
+}
+
 
 
 

@@ -38,6 +38,29 @@ prdCategory_query <- function(conn=tsda::conn_rds('cprds')) {
 
 }
 
+#' 按上级组进行查询产品大类
+#'
+#' @param conn 连接
+#' @param FParentPrdCategory 上级组
+#'
+#' @return 返回值
+#' @export
+#'
+#' @examples
+#' prdCategory_queryByParent()
+prdCategory_queryByParent <- function(conn=tsda::conn_rds('cprds'),FParentPrdCategory ='实验耗材') {
+
+
+  sql <- paste0("SELECT
+  FPrdCategoryNumber as 产品大类代码
+  ,FPrdCategoryName  as 产品大类名称
+  FROM  rds_mtrl_prdCategory
+  where  Fdetail =1 and Fdeleted =0 and FParentPrdCategory ='",FParentPrdCategory,"'")
+  data = tsda::sql_select(conn,sql)
+  return(data)
+
+}
+
 
 
 

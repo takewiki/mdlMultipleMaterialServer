@@ -117,3 +117,86 @@ data_read2 <- function(conn=tsda::conn_rds('cprds'),
   return(data)
 
 }
+
+
+#' 上传数据
+#'
+#' @param conn 连接
+#' @param file_name 文件名
+#' @param sheet_name 页签名
+#' @param table_name 表名
+#' @param pageCount  分页数
+#' @param table_key  表主键
+#' @param table_caption 表标题
+#' @param table_key2  主键2
+#' @param table_caption2 标题2
+#' @param table_key3 键3
+#' @param table_caption3 标题3
+#'
+#' @return 返回值
+#' @export
+#'
+#' @examples
+#' data_read()
+data_read3 <- function(conn=tsda::conn_rds('cprds'),
+                       file_name ='data-raw/data/属性选项配置模板.xlsx',
+                       sheet_name ="属性选项配置",
+                       table_name = 'rds_mtrl_propValueConfig',
+                       table_key = 'FPrdCategoryNumber',
+                       table_key2 = 'FPropCategoryNumber',
+                       table_key3 = 'FPropNumber',
+                       table_caption = '产品大类代码',
+                       table_caption2 = '属性类别代码',
+                       table_caption3 = '属性选项代码',
+                       pageCount=500) {
+
+
+  data <- readxl::read_excel(file_name, sheet = sheet_name)
+  ncount = nrow(data)
+  if (ncount >0){
+    table_name_input = paste0(table_name,'Input')
+    sql_del =  paste0("truncate table ",table_name_input)
+    tsda::sql_update(conn,sql_del)
+
+    if(ncount>pageCount){
+      pageInfo = tsdo::paging_setting(ncount,pageCount)
+      ncount_page = nrow(pageInfo)
+      lapply(1:ncount_page, function(i){
+        FStart = pageInfo$FStart[i]
+        FEnd = pageInfo$FEnd[i]
+        item = data[FStart:FEnd, ]
+        tsda::db_writeTable(conn = conn,table_name = table_name_input,r_object = item,append = T)
+      })
+
+    }else{
+      tsda::db_writeTable(conn = conn,table_name = table_name_input,r_object = data,append = T)
+    }
+
+    #进一步处理，删除旧有的数据
+    sql_del2 = paste0("  delete a from rds_mtrl_propValueConfig a
+  inner join rds_mtrl_propValueConfigInput b
+  on  a.FPrdCategoryNumber = b.FPrdCategoryNumber
+  and a.FPropCategoryNumber = b.FPropCategoryNumber
+  and a.FPropNumber = b.FPropNumber")
+    tsda::sql_update(conn,sql_del2)
+    #插入新的数据
+    sql_ins = paste0("insert into rds_mtrl_propValueConfig
+  select * from rds_mtrl_propValueConfigInput")
+    tsda::sql_update(conn,sql_ins)
+    #删除表
+    sql_del =  paste0("truncate table ",table_name_input)
+    tsda::sql_update(conn,sql_del)
+
+
+
+
+  }
+
+
+  return(data)
+
+}
+
+
+
+
