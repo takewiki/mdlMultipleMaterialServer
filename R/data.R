@@ -199,4 +199,24 @@ data_read3 <- function(conn=tsda::conn_rds('cprds'),
 
 
 
+#' 上传元数据
+#'
+#' @param conn 连接
+#' @param data 数据
+#' @param FTableName 表名
+#'
+#' @return 返回值
+#' @export
+#'
+#' @examples
+#' meta_upload()
+data_upload <- function(conn=tsda::conn_rds('cprds'),data,FTableName='rds_mtrl_prdConfigRes') {
 
+  ncount <- nrow(data)
+  max_Id = meta_maxId(conn = conn,FTableName=FTableName)
+  data_id = data.frame(FInterId = 1:ncount+max_Id)
+  data2 = cbind(data_id,data)
+  tsda::db_writeTable(conn = conn,table_name = FTableName,r_object = data2,append = T)
+  return(data2)
+
+}

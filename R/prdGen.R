@@ -114,8 +114,7 @@ prdGenServer_prdGroup <- function(input,output,session) {
 #' @examples
 #' materialGeneratorServer()
 prdGenServer <- function(input,output,session) {
-  # prdGenServer_prdCategory(input,output,session)
-  # prdGenServer_prdGroup(input,output,session)
+
 
   prdCategoryData <- shiny::eventReactive(input$prdGen_confirm_btn,{
     var_prdGen_prdCategory_placeholder <- tsui::var_ListChoose1('prdGen_parentCategory_lc1')
@@ -152,8 +151,12 @@ prdGenServer <- function(input,output,session) {
     shiny::validate(
       need(length(input$prdGen_prdGroup_dt_rows_selected) > 0, "请从产品分组中选中任意一行")
     )
+
     data_detail <- prdGroupData()
-    res  <- data_detail[as.integer(input$prdGen_prdGroup_dt_rows_selected), '产品分组代码']
+    FPrdGroupNumber  <- data_detail[as.integer(input$prdGen_prdGroup_dt_rows_selected), '产品分组代码']
+    FPrdGroupName  <- data_detail[as.integer(input$prdGen_prdGroup_dt_rows_selected), '产品分组名称']
+    res = list(FPrdGroupNumber=FPrdGroupNumber,FPrdGroupName=FPrdGroupName)
+
 
 
 
@@ -166,6 +169,7 @@ prdGenServer <- function(input,output,session) {
     shiny::validate(
       need(length(input$prdGen_prdCategory_dt_rows_selected) > 0, "请从产品大类中选中任意一行")
     )
+
     data_detail <- prdCategoryData()
     FPrdCategoryFNumber  <- data_detail[as.integer(input$prdGen_prdCategory_dt_rows_selected), '产品大类代码']
     print(FPrdCategoryFNumber)
@@ -202,35 +206,77 @@ prdGenServer <- function(input,output,session) {
   #show the propSelector
   shiny::observeEvent(input$prdGen_propSelector_btn,{
 
-    output$prdGen_propSelector_print <- shiny::renderPrint({
-      data = propCategoryData()
-      ncount = nrow(data)
-      if(ncount>0){
-        res = lapply(1:ncount, function(i){
-          FPrdCategoryNumber = data$FPrdCategoryNumber[i]
-          FPrdCategoryName = data$FPrdCategoryName[i]
-          FPropCategoryNumber = data$FPropCategoryNumber[i]
-          FPropCategoryName =   data$FPropCategoryName[i]
-          FPropValueNumber = input[[FPropCategoryNumber]]
-          FPropValueName = propValue_queryByNumber(FPropNumber=FPropValueNumber)
-          FPrdGroupNumber =prdGroupSelected()
-          info = paste0("  产品大类:",FPrdCategoryNumber,"/",FPrdCategoryName," 产品分组:",FPrdGroupNumber,"  属性类别:",FPropCategoryNumber,"/",FPropCategoryName,"  属性选项:",FPropValueNumber,"/",FPropValueName)
+    flag_prdCategory =is.null(input$prdGen_prdCategory_dt_rows_selected)
+    flag_prdGroup =is.null(input$prdGen_prdGroup_dt_rows_selected)
+    if(flag_prdCategory){
+      #prdCategory not selected
+      pop_notice('请在产品大类列表中选择一行')
+    }else{
+      #prdGroup not selected
+      if(flag_prdGroup){
+        pop_notice('请在产品分组列表中选择一行')
+      }else{
+        #both of cate and group are selected
+        output$prdGen_list_dt <- DT::renderDataTable({
+          data = propCategoryData()
+          ncount = nrow(data)
+          if(ncount>0){
+            res_FPropValueNumber = character()
+            res_FPropValueName =character()
+            res = lapply(1:ncount, function(i){
+              FPrdCategoryNumber = data$FPrdCategoryNumber[i]
+              FPrdCategoryName = data$FPrdCategoryName[i]
+              FPropCategoryNumber = data$FPropCategoryNumber[i]
+              FPropCategoryName =   data$FPropCategoryName[i]
+              FPropValueNumber = input[[FPropCategoryNumber]]
+              FPropValueName = propValue_queryByNumber(FPropNumber=FPropValueNumber)
+              res_FPropValueNumber[i] <<- FPropValueNumber
+              res_FPropValueName[i] <<- FPropValueName
 
-          print(info)
+            })
+            FPrdGroupNumber =prdGroupSelected()$FPrdGroupNumber
+            FPrdGroupName =prdGroupSelected()$FPrdGroupName
+            data$FPropValueNumber <- res_FPropValueNumber
+            data$FPropValueName <-res_FPropValueName
+            data$FPrdGroupNumber <-FPrdGroupNumber
+            data$FPrdGroupName <-FPrdGroupName
+            FPropValueNumberFlag = paste0(res_FPropValueNumber,collapse = "_")
+            data$FPropValueNumberFlag = FPropValueNumberFlag
+            FPropValueNameFlag = paste0(res_FPropValueName,collapse = "_")
+            data$FPropValueNameFlag = FPropValueNameFlag
+            #openxlsx::write.xlsx(x = data,file = 'res_config.xlsx',overwrite = TRUE)
+            #write into DB
+            flag_new_ConfigRes = prdConfigRes_isNew(FPrdGroupNumber =FPrdGroupNumber,FPropValueNumberFlag = FPropValueNumberFlag )
+            if(flag_new_ConfigRes){
+              #如果选配结果已经存在,则不插入数据
+              data_upload(conn = tsda::conn_rds('cprds'),data = data,FTableName = 'rds_mtrl_prdConfigRes')
+            }
+            #print(data)
+            names(data) <-c('产品大类代码','产品大类名称','属性分类代码','属性类别名称','属性代码','属性名称','产品分组代码','产品分组名称','选配结果代码','选配结果名称')
+            output$prdGen_ConfigRes_dt <- DT::renderDataTable(data)
+            res = prdGenList_upload(FPrdGroupNumber = FPrdGroupNumber,FPrdGroupName = FPrdGroupName,FPropValueNumberFlag = FPropValueNumberFlag,FPropValueNameFlag = FPropValueNameFlag)
+            #print(res)
+            # output$prdGen_list_dt <- DT::renderDataTable(res)
+            # res
 
 
+
+
+
+          }
 
         })
+
+
+      }
       }
 
 
 
 
-
-    })
-
-
   })
+
+
 
 
 

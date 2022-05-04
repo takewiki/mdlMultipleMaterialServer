@@ -60,6 +60,12 @@ propValueConfig_read()
 
 
 
+meta_createTable(FTableCaption = '产品选配结果')
+meta_createView(FTableCaption = '产品选配结果')
+
+
+
+
 
 
 
