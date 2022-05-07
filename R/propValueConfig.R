@@ -131,13 +131,14 @@ propValueConfigUIServer_sheet <- function(input,output,session){
 #' @param input 输入
 #' @param output 输出
 #' @param session 会议
+#' @param conn 连接
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' file_deal()
-propValueConfigServer_read <- function(input,output,session) {
+propValueConfigServer_read <- function(input,output,session,conn) {
   var_file_name  = tsui::var_file('propValueConfig_upload_file')
   var_sheet_name =tsui::var_ListChoose1('propValueConfig_sheets_lc1')
   shiny::observeEvent(input$propValueConfig_upload_btn,{
@@ -145,7 +146,7 @@ propValueConfigServer_read <- function(input,output,session) {
     print(file_name)
     sheet_name = var_sheet_name()
     print(sheet_name)
-    data = propValueConfig_read(file_name = file_name ,sheet_name = sheet_name )
+    data = propValueConfig_read(conn = conn,file_name = file_name ,sheet_name = sheet_name )
     print(data)
 
     ncount =nrow(data)
@@ -172,13 +173,14 @@ propValueConfigServer_read <- function(input,output,session) {
 #' @param input 输入
 #' @param output 输出
 #' @param session 会话
+#' @param conn 连接
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' propValueConfigServer()
-propValueConfigServer <- function(input,output,session){
+propValueConfigServer <- function(input,output,session,conn){
 
   propValueConfigServer_query(input,output,session)
   propValueConfigUIServer_sheet(input,output,session)

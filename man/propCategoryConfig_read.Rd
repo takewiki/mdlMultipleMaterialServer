@@ -5,13 +5,13 @@
 \title{读取属性类别数据}
 \usage{
 propCategoryConfig_read(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   file_name = "data-raw/data/属性类别配置模板.xlsx",
   sheet_name = "属性类别配置"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接设置}
 
 \item{file_name}{文件名}
 

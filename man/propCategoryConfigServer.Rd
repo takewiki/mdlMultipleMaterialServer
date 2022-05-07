@@ -4,7 +4,7 @@
 \alias{propCategoryConfigServer}
 \title{产品大娄的处理函数}
 \usage{
-propCategoryConfigServer(input, output, session)
+propCategoryConfigServer(input, output, session, conn)
 }
 \arguments{
 \item{input}{输入}
@@ -12,6 +12,8 @@ propCategoryConfigServer(input, output, session)
 \item{output}{输出}
 
 \item{session}{会话}
+
+\item{conn}{连接}
 }
 \value{
 返回值

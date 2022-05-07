@@ -4,7 +4,7 @@
 \alias{prdCategoryServer_query}
 \title{产品大类查询}
 \usage{
-prdCategoryServer_query(input, output, session)
+prdCategoryServer_query(input, output, session, conn_cfg)
 }
 \arguments{
 \item{input}{输入}
@@ -12,6 +12,8 @@ prdCategoryServer_query(input, output, session)
 \item{output}{输出}
 
 \item{session}{会话}
+
+\item{conn_cfg}{连接配置}
 }
 \value{
 返回值

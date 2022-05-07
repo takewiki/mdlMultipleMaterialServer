@@ -4,7 +4,7 @@
 \alias{prdCategoryServer}
 \title{产品大娄的处理函数}
 \usage{
-prdCategoryServer(input, output, session)
+prdCategoryServer(input, output, session, conn_cfg)
 }
 \arguments{
 \item{input}{输入}
@@ -12,6 +12,8 @@ prdCategoryServer(input, output, session)
 \item{output}{输出}
 
 \item{session}{会话}
+
+\item{conn}{连接}
 }
 \value{
 返回值

@@ -5,7 +5,7 @@
 \title{上传数据}
 \usage{
 data_read3(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   file_name = "data-raw/data/属性选项配置模板.xlsx",
   sheet_name = "属性选项配置",
   table_name = "rds_mtrl_propValueConfig",
@@ -19,9 +19,7 @@ data_read3(
 )
 }
 \arguments{
-\item{conn}{连接}
-
-\item{file_name}{文件名}
+\item{conn_cfg}{连接}
 
 \item{sheet_name}{页签名}
 

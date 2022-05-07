@@ -5,13 +5,13 @@
 \title{读取产品大类数据}
 \usage{
 prdCategory_read(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   file_name = "data-raw/data/rds_mtrl_productCategory.xlsx",
   sheet_name = "产品大类"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接设置}
 
 \item{file_name}{文件名}
 

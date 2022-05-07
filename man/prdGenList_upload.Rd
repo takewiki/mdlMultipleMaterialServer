@@ -5,7 +5,7 @@
 \title{产品结果查看}
 \usage{
 prdGenList_upload(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   FPrdGroupNumber = "1.1.1.004.002",
   FPrdGroupName = "PCR板无群边",
  
@@ -15,7 +15,7 @@ prdGenList_upload(
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接设置}
 
 \item{FPrdGroupNumber}{产品分组}
 

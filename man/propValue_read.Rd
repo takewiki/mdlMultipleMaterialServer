@@ -5,13 +5,13 @@
 \title{读取属性选项数据}
 \usage{
 propValue_read(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   file_name = "data-raw/data/属性选项模板.xlsx",
   sheet_name = "属性选项"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接文件设置}
 
 \item{file_name}{文件名}
 

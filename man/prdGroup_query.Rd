@@ -4,10 +4,10 @@
 \alias{prdGroup_query}
 \title{产品大类查询}
 \usage{
-prdGroup_query(conn = tsda::conn_rds("cprds"))
+prdGroup_query(conn_cfg = "config/conn_cfg.R")
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接设置}
 }
 \value{
 返回值

@@ -5,13 +5,13 @@
 \title{上传元数据}
 \usage{
 data_upload(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   data,
   FTableName = "rds_mtrl_prdConfigRes"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接文件}
 
 \item{data}{数据}
 

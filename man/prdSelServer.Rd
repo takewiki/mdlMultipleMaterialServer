@@ -4,7 +4,7 @@
 \alias{prdSelServer}
 \title{处理逻辑}
 \usage{
-prdSelServer(input, output, session)
+prdSelServer(input, output, session, conn_cfg = "config/conn_cfg.R")
 }
 \arguments{
 \item{input}{输入}
@@ -12,6 +12,8 @@ prdSelServer(input, output, session)
 \item{output}{输出}
 
 \item{session}{会话}
+
+\item{conn_cfg}{连接文件}
 }
 \value{
 返回值

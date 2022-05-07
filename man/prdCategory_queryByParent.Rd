@@ -5,12 +5,12 @@
 \title{按上级组进行查询产品大类}
 \usage{
 prdCategory_queryByParent(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   FParentPrdCategory = "实验耗材"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接配置}
 
 \item{FParentPrdCategory}{上级组}
 }

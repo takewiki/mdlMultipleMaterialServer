@@ -1,18 +1,19 @@
 #' 读取属性类别数据
 #'
-#' @param conn  连接
 #' @param file_name 文件名
 #' @param sheet_name 页签表
+#' @param conn_cfg 连接设置
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' propCategory_read()
-propCategory_read <- function(conn=tsda::conn_rds('cprds'),
+propCategory_read <- function(conn_cfg ='config/conn_cfg.R'
+                              ,
                              file_name ='data-raw/data/属性类别模板.xlsx',
                              sheet_name ="属性类别") {
-  res <- data_read(conn=conn,
+  res <- data_read(conn_cfg = conn_cfg,
                    file_name =file_name,
                    sheet_name =sheet_name,
                    table_name = 'rds_mtrl_propCategory',
@@ -25,13 +26,16 @@ propCategory_read <- function(conn=tsda::conn_rds('cprds'),
 
 #' 属性类别查询
 #'
-#' @param conn 连接
+#' @param conn_cfg 连接配置
 #'
 #' @return 返回值
 #'
 #' @examples
 #' propCategory_query()
-propCategory_query <- function(conn=tsda::conn_rds('cprds')) {
+propCategory_query <- function(conn_cfg ='config/conn_cfg.R') {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+conn = tsda::conn_open(conn_config_info = conn_info)
+
 
   sql <- paste0("SELECT
       [属性类型代码]
@@ -39,6 +43,8 @@ propCategory_query <- function(conn=tsda::conn_rds('cprds')) {
   FROM  [vw_rds_mtrl_propCategory]
   where 是否禁用 =0")
   data = tsda::sql_select(conn,sql)
+  tsda::conn_close(conn)
+
   return(data)
 
 }
@@ -46,18 +52,26 @@ propCategory_query <- function(conn=tsda::conn_rds('cprds')) {
 
 #' 属性类别查询
 #'
-#' @param conn 连接
+#' @param conn_cfg 连接
+#' @param FPrdCategoryNumber 代码
 #'
 #' @return 返回值
+#' @export
 #'
 #' @examples
 #' propCategory_queryDetail()
-propCategory_queryDetail <- function(conn=tsda::conn_rds('cprds'),FPrdCategoryNumber ='1.1.1.001') {
+propCategory_queryDetail <- function(conn_cfg ='config/conn_cfg.R',
+                                     FPrdCategoryNumber ='1.1.1.001') {
+   conn_info = tsda::conn_config(config_file = conn_cfg)
+conn = tsda::conn_open(conn_config_info = conn_info)
+
 
   sql <- paste0("   select   FPrdCategoryNumber,FPrdCategoryName,FPropCategoryNumber,FPropCategoryName  from rds_mtrl_propCategoryConfig
   where FPrdCategoryNumber ='",FPrdCategoryNumber,"' and FDeleted =0
   order by FSeq")
   data = tsda::sql_select(conn,sql)
+  tsda::conn_close(conn)
+
   return(data)
 
 }
@@ -140,6 +154,7 @@ propCategoryUIServer_sheet <- function(input,output,session){
 #'
 #' @param input 输入
 #' @param output 输出
+#' @param conn_cfg 连接设置
 #' @param session 会议
 #'
 #' @return 返回值
@@ -147,7 +162,7 @@ propCategoryUIServer_sheet <- function(input,output,session){
 #'
 #' @examples
 #' file_deal()
-propCategoryServer_read <- function(input,output,session) {
+propCategoryServer_read <- function(input,output,session,conn_cfg ='config/conn_cfg.R') {
   var_file_name  = tsui::var_file('propCategory_upload_file')
   var_sheet_name =tsui::var_ListChoose1('propCategory_sheets_lc1')
   shiny::observeEvent(input$propCategory_upload_btn,{
@@ -155,7 +170,7 @@ propCategoryServer_read <- function(input,output,session) {
     print(file_name)
     sheet_name = var_sheet_name()
     print(sheet_name)
-    data = propCategory_read(file_name = file_name ,sheet_name = sheet_name )
+    data = propCategory_read(conn_cfg = conn_cfg,file_name = file_name ,sheet_name = sheet_name )
     print(data)
 
     ncount =nrow(data)
@@ -181,6 +196,7 @@ propCategoryServer_read <- function(input,output,session) {
 #'
 #' @param input 输入
 #' @param output 输出
+#' @param conn_cfg 连接设置
 #' @param session 会话
 #'
 #' @return 返回值
@@ -188,11 +204,11 @@ propCategoryServer_read <- function(input,output,session) {
 #'
 #' @examples
 #' propCategoryServer()
-propCategoryServer <- function(input,output,session){
+propCategoryServer <- function(input,output,session,conn_cfg ='config/conn_cfg.R'){
 
   propCategoryServer_query(input,output,session)
   propCategoryUIServer_sheet(input,output,session)
-  propCategoryServer_read(input,output,session)
+  propCategoryServer_read(input,output,session,conn_cfg = conn_cfg )
 
 
 

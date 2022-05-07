@@ -1,55 +1,65 @@
 #' 读取产品大类数据
 #'
-#' @param conn  连接
 #' @param file_name 文件名
 #' @param sheet_name 页签表
+#' @param conn_cfg 连接设置
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' prdCategory_read()
-prdCategory_read <- function(conn=tsda::conn_rds('cprds'),
+prdCategory_read <- function(conn_cfg = 'config/conn_cfg.R',
                              file_name ='data-raw/data/rds_mtrl_productCategory.xlsx',
                              sheet_name ="产品大类") {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+  conn = tsda::conn_open(conn_config_info = conn_info)
   res <- data_read(conn = conn,
                    file_name = file_name,
                    sheet_name = sheet_name,
                    table_name = 'rds_mtrl_prdCategory',)
+  tsda::conn_close(conn)
   return(res)
 }
 
 
 #' 产品大类查询
 #'
-#' @param conn 连接
+#' @param conn_cfg 连接文本
 #'
 #' @return 返回值
 #'
 #' @examples
 #' prdCategory_query()
-prdCategory_query <- function(conn=tsda::conn_rds('cprds')) {
+prdCategory_query <- function(conn_cfg ='config/conn_cfg.R') {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+conn = tsda::conn_open(conn_config_info = conn_info)
+
 
   sql <- paste0("SELECT  产品大类代码,产品大类名称,上级产品大类
   FROM  vw_rds_mtrl_prdCategory
   where 是否明细 =1 and 是否禁用 =0")
   data = tsda::sql_select(conn,sql)
+  tsda::conn_close(conn)
+
   return(data)
 
 }
 
 #' 按上级组进行查询产品大类
 #'
-#' @param conn 连接
 #' @param FParentPrdCategory 上级组
+#' @param conn_cfg 连接配置
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' prdCategory_queryByParent()
-prdCategory_queryByParent <- function(conn=tsda::conn_rds('cprds'),FParentPrdCategory ='实验耗材') {
+prdCategory_queryByParent <- function(conn_cfg ='config/conn_cfg.R',FParentPrdCategory ='实验耗材') {
 
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+conn = tsda::conn_open(conn_config_info = conn_info)
 
   sql <- paste0("SELECT
   FPrdCategoryNumber as 产品大类代码
@@ -57,6 +67,8 @@ prdCategory_queryByParent <- function(conn=tsda::conn_rds('cprds'),FParentPrdCat
   FROM  rds_mtrl_prdCategory
   where  Fdetail =1 and Fdeleted =0 and FParentPrdCategory ='",FParentPrdCategory,"'")
   data = tsda::sql_select(conn,sql)
+  tsda::conn_close(conn)
+
   return(data)
 
 }
@@ -69,6 +81,7 @@ prdCategory_queryByParent <- function(conn=tsda::conn_rds('cprds'),FParentPrdCat
 #'
 #' @param input 输入
 #' @param output 输出
+#' @param conn_cfg 连接配置
 #' @param session 会话
 #'
 #'@import tsdo
@@ -76,10 +89,10 @@ prdCategory_queryByParent <- function(conn=tsda::conn_rds('cprds'),FParentPrdCat
 #'
 #' @examples
 #' prdCategoryServer_query()
-prdCategoryServer_query <- function(input,output,session){
+prdCategoryServer_query <- function(input,output,session,conn_cfg){
 
   shiny::observeEvent(input$btnPrdCategory_query,{
-    data = prdCategory_query()
+    data = prdCategory_query(conn_cfg = conn_cfg)
     file_name = paste0('产品大类下载_',getDate(),".xlsx")
     tsui::run_dataTable2(id = 'dataviewPrdCategory_query',data = data)
     tsui::run_download_xlsx(id = 'btnPrdCategory_dl',data = data,filename = file_name)
@@ -136,6 +149,7 @@ prdCategoryUIServer_sheet <- function(input,output,session){
 #'
 #' @param input 输入
 #' @param output 输出
+#' @param conn_cfg 连接
 #' @param session 会议
 #'
 #' @return 返回值
@@ -143,7 +157,7 @@ prdCategoryUIServer_sheet <- function(input,output,session){
 #'
 #' @examples
 #' file_deal()
-prdCategoryServer_read <- function(input,output,session) {
+prdCategoryServer_read <- function(input,output,session,conn_cfg) {
   var_file_name  = tsui::var_file('filePrdCategory_upload')
   var_sheet_name =tsui::var_ListChoose1('lc1PrdCategory_sheets')
   shiny::observeEvent(input$btnprdCategory_upload,{
@@ -151,7 +165,7 @@ prdCategoryServer_read <- function(input,output,session) {
     print(file_name)
     sheet_name = var_sheet_name()
     print(sheet_name)
-    data = prdCategory_read(file_name = file_name ,sheet_name = sheet_name )
+    data = prdCategory_read(conn_cfg = conn_cfg,file_name = file_name ,sheet_name = sheet_name )
      print(data)
 
     ncount =nrow(data)
@@ -178,17 +192,18 @@ prdCategoryServer_read <- function(input,output,session) {
 #' @param input 输入
 #' @param output 输出
 #' @param session 会话
+#' @param conn 连接
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' prdCategoryServer()
-prdCategoryServer <- function(input,output,session){
+prdCategoryServer <- function(input,output,session,conn_cfg){
 
-  prdCategoryServer_query(input,output,session)
+  prdCategoryServer_query(input,output,session,conn_cfg = conn_cfg)
   prdCategoryUIServer_sheet(input,output,session)
-  prdCategoryServer_read(input,output,session)
+  prdCategoryServer_read(input,output,session,conn_cfg = conn_cfg)
 
 
 

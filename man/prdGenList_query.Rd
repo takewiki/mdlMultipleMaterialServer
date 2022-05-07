@@ -5,14 +5,14 @@
 \title{产品结果查看}
 \usage{
 prdGenList_query(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   FPrdGroupNumber = "1.1.1.004.002",
  
     FPropValueNumberFlag = "C000001_AC0001_AD0003_AF0001_AH0002_AJ0011_AM0001_AS0001_AT0001"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接}
 
 \item{FPrdGroupNumber}{产品分组}
 

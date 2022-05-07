@@ -5,15 +5,17 @@
 \title{获取下一个代码}
 \usage{
 prdGenRule_getNextNumber(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   FPrdGroupNumber = "1.1.1.001.001",
   FNumberLength = 6
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接文件}
 
 \item{FPrdGroupNumber}{物料分组代码}
+
+\item{FNumberLength}{长度}
 }
 \value{
 返回值

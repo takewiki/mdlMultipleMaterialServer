@@ -4,7 +4,7 @@
 \alias{prdCategoryServer_read}
 \title{处理内容}
 \usage{
-prdCategoryServer_read(input, output, session)
+prdCategoryServer_read(input, output, session, conn_cfg)
 }
 \arguments{
 \item{input}{输入}
@@ -12,6 +12,8 @@ prdCategoryServer_read(input, output, session)
 \item{output}{输出}
 
 \item{session}{会议}
+
+\item{conn_cfg}{连接}
 }
 \value{
 返回值

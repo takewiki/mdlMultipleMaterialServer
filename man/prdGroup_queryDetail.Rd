@@ -5,12 +5,14 @@
 \title{产品大类查询}
 \usage{
 prdGroup_queryDetail(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   FPrdCategoryFNumber = "1.1.1.006"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接}
+
+\item{FPrdCategoryFNumber}{产品大类}
 }
 \value{
 返回值

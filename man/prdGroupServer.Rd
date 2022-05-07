@@ -4,7 +4,7 @@
 \alias{prdGroupServer}
 \title{产品大娄的处理函数}
 \usage{
-prdGroupServer(input, output, session)
+prdGroupServer(input, output, session, conn_cfg = "config/conn_cfg.R")
 }
 \arguments{
 \item{input}{输入}
@@ -12,6 +12,8 @@ prdGroupServer(input, output, session)
 \item{output}{输出}
 
 \item{session}{会话}
+
+\item{conn}{连接}
 }
 \value{
 返回值

@@ -1,18 +1,19 @@
 #' 读取产品分组数据
 #'
-#' @param conn  连接
 #' @param file_name 文件名
 #' @param sheet_name 页签表
+#' @param conn_cfg 连接设置
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' prdGroup_read()
-prdGroup_read <- function(conn=tsda::conn_rds('cprds'),
+prdGroup_read <- function(conn_cfg ='config/conn_cfg.R'
+                          ,
                              file_name ='data-raw/data/产品分组模板.xlsx',
                              sheet_name ="产品大类") {
-  res <- data_read(conn=conn,
+  res <- data_read(conn_cfg = conn_cfg,
                    file_name =file_name,
                    sheet_name =sheet_name,
                    table_name = 'rds_mtrl_prdGroup',
@@ -25,13 +26,17 @@ prdGroup_read <- function(conn=tsda::conn_rds('cprds'),
 
 #' 产品大类查询
 #'
-#' @param conn 连接
+#' @param conn_cfg 连接设置
 #'
 #' @return 返回值
 #'
 #' @examples
 #' prdGroup_query()
-prdGroup_query <- function(conn=tsda::conn_rds('cprds')) {
+prdGroup_query <- function(conn_cfg ='config/conn_cfg.R'
+                           ) {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+conn = tsda::conn_open(conn_config_info = conn_info)
+
 
   sql <- paste0("SELECT
       [产品分组代码]
@@ -44,19 +49,26 @@ prdGroup_query <- function(conn=tsda::conn_rds('cprds')) {
   FROM [vw_rds_mtrl_prdGroup]
     where   是否禁用 =0")
   data = tsda::sql_select(conn,sql)
+  tsda::conn_close(conn)
+
   return(data)
 
 }
 
 #' 产品大类查询
 #'
-#' @param conn 连接
+#' @param conn_cfg 连接
+#' @param FPrdCategoryFNumber 产品大类
 #'
 #' @return 返回值
 #'
 #' @examples
 #' prdGroup_query()
-prdGroup_queryDetail <- function(conn=tsda::conn_rds('cprds'),FPrdCategoryFNumber ='1.1.1.006') {
+prdGroup_queryDetail <- function(conn_cfg ='config/conn_cfg.R',FPrdCategoryFNumber ='1.1.1.006') {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+conn = tsda::conn_open(conn_config_info = conn_info)
+
+
 
   sql <- paste0("SELECT
       [FPrdGroupNumber] as 产品分组代码
@@ -66,6 +78,8 @@ prdGroup_queryDetail <- function(conn=tsda::conn_rds('cprds'),FPrdCategoryFNumbe
    where FPrdCategoryFNumber ='",FPrdCategoryFNumber,"'
    and Fdeleted =0  and Fdetail =1")
   data = tsda::sql_select(conn,sql)
+  tsda::conn_close(conn)
+
   return(data)
 
 }
@@ -145,6 +159,7 @@ prdGroupUIServer_sheet <- function(input,output,session){
 #'
 #' @param input 输入
 #' @param output 输出
+#' @param conn_cfg 连接设置
 #' @param session 会议
 #'
 #' @return 返回值
@@ -152,7 +167,7 @@ prdGroupUIServer_sheet <- function(input,output,session){
 #'
 #' @examples
 #' file_deal()
-prdGroupServer_read <- function(input,output,session) {
+prdGroupServer_read <- function(input,output,session,conn_cfg ='config/conn_cfg.R') {
   var_file_name  = tsui::var_file('filePrdGroup_upload')
   var_sheet_name =tsui::var_ListChoose1('lc1PrdGroup_sheets')
   shiny::observeEvent(input$btnprdGroup_upload,{
@@ -160,7 +175,7 @@ prdGroupServer_read <- function(input,output,session) {
     print(file_name)
     sheet_name = var_sheet_name()
     print(sheet_name)
-    data = prdGroup_read(file_name = file_name ,sheet_name = sheet_name )
+    data = prdGroup_read(conn_cfg = conn_cfg ,file_name = file_name ,sheet_name = sheet_name )
     print(data)
 
     ncount =nrow(data)
@@ -187,17 +202,18 @@ prdGroupServer_read <- function(input,output,session) {
 #' @param input 输入
 #' @param output 输出
 #' @param session 会话
+#' @param conn 连接
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' prdGroupServer()
-prdGroupServer <- function(input,output,session){
+prdGroupServer <- function(input,output,session,conn_cfg='config/conn_cfg.R'){
 
   prdGroupServer_query(input,output,session)
   prdGroupUIServer_sheet(input,output,session)
-  prdGroupServer_read(input,output,session)
+  prdGroupServer_read(input,output,session,conn_cfg = conn_cfg)
 
 
 

@@ -4,7 +4,7 @@
 \alias{propValueServer_read}
 \title{处理内容}
 \usage{
-propValueServer_read(input, output, session)
+propValueServer_read(input, output, session, conn_cfg)
 }
 \arguments{
 \item{input}{输入}
@@ -12,6 +12,8 @@ propValueServer_read(input, output, session)
 \item{output}{输出}
 
 \item{session}{会议}
+
+\item{conn_cfg}{连接设置}
 }
 \value{
 返回值

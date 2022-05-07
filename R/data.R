@@ -1,18 +1,18 @@
 #' 上传数据
 #'
-#' @param conn 连接
 #' @param file_name 文件名
 #' @param sheet_name 页签名
 #' @param table_name 表名
 #' @param pageCount  分页数
 #' @param table_key  表主键
 #' @param table_caption 表标题
+#' @param conn_cfg 连接文件
 #'
 #' @return 返回值
 #'
 #' @examples
 #' data_read()
-data_read <- function(conn=tsda::conn_rds('cprds'),
+data_read <- function(conn_cfg ='config/conn_cfg.R',
                              file_name ='data-raw/data/产品大类模板.xlsx',
                              sheet_name ="产品大类",
                              table_name = 'rds_mtrl_prdCategory',
@@ -23,6 +23,8 @@ data_read <- function(conn=tsda::conn_rds('cprds'),
 
   data <- readxl::read_excel(file_name, sheet = sheet_name)
   ncount = nrow(data)
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+  conn = tsda::conn_open(conn_config_info = conn_info)
   if (ncount >0){
     key_str = data[ ,table_caption,drop=TRUE]
     key_str =  tsdo::sql_str(key_str)
@@ -46,7 +48,7 @@ data_read <- function(conn=tsda::conn_rds('cprds'),
 
   }
 
-
+   tsda::conn_close(conn)
   return(data)
 
 }
@@ -54,7 +56,6 @@ data_read <- function(conn=tsda::conn_rds('cprds'),
 
 #' 上传数据
 #'
-#' @param conn 连接
 #' @param file_name 文件名
 #' @param sheet_name 页签名
 #' @param table_name 表名
@@ -63,13 +64,14 @@ data_read <- function(conn=tsda::conn_rds('cprds'),
 #' @param table_caption 表标题
 #' @param table_key2  主键2
 #' @param table_caption2 标题2
+#' @param conn_cfg 连接文件
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' data_read()
-data_read2 <- function(conn=tsda::conn_rds('cprds'),
+data_read2 <- function(conn_cfg ='config/conn_cfg.R',
                       file_name ='data-raw/data/属性类别配置模板.xlsx',
                       sheet_name ="属性类别配置",
                       table_name = 'rds_mtrl_propCategoryConfig',
@@ -79,7 +81,8 @@ data_read2 <- function(conn=tsda::conn_rds('cprds'),
                       table_caption2 = '物料属性类别代码',
                       pageCount=500) {
 
-
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+  conn = tsda::conn_open(conn_config_info = conn_info)
   data <- readxl::read_excel(file_name, sheet = sheet_name)
   ncount = nrow(data)
   if (ncount >0){
@@ -113,7 +116,7 @@ data_read2 <- function(conn=tsda::conn_rds('cprds'),
 
   }
 
-
+  tsda::conn_close(conn)
   return(data)
 
 }
@@ -121,8 +124,6 @@ data_read2 <- function(conn=tsda::conn_rds('cprds'),
 
 #' 上传数据
 #'
-#' @param conn 连接
-#' @param file_name 文件名
 #' @param sheet_name 页签名
 #' @param table_name 表名
 #' @param pageCount  分页数
@@ -132,13 +133,14 @@ data_read2 <- function(conn=tsda::conn_rds('cprds'),
 #' @param table_caption2 标题2
 #' @param table_key3 键3
 #' @param table_caption3 标题3
+#' @param conn_cfg 连接
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' data_read()
-data_read3 <- function(conn=tsda::conn_rds('cprds'),
+data_read3 <- function(conn_cfg = 'config/conn_cfg.R',
                        file_name ='data-raw/data/属性选项配置模板.xlsx',
                        sheet_name ="属性选项配置",
                        table_name = 'rds_mtrl_propValueConfig',
@@ -149,6 +151,8 @@ data_read3 <- function(conn=tsda::conn_rds('cprds'),
                        table_caption2 = '属性类别代码',
                        table_caption3 = '属性选项代码',
                        pageCount=500) {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+  conn = tsda::conn_open(conn_config_info = conn_info)
 
 
   data <- readxl::read_excel(file_name, sheet = sheet_name)
@@ -191,7 +195,7 @@ data_read3 <- function(conn=tsda::conn_rds('cprds'),
 
 
   }
-
+  tsda::conn_close(conn)
 
   return(data)
 
@@ -201,22 +205,26 @@ data_read3 <- function(conn=tsda::conn_rds('cprds'),
 
 #' 上传元数据
 #'
-#' @param conn 连接
 #' @param data 数据
 #' @param FTableName 表名
+#' @param conn_cfg 连接文件
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' meta_upload()
-data_upload <- function(conn=tsda::conn_rds('cprds'),data,FTableName='rds_mtrl_prdConfigRes') {
+data_upload <- function(conn_cfg ='config/conn_cfg.R',
+                        data,FTableName='rds_mtrl_prdConfigRes') {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+  conn = tsda::conn_open(conn_config_info = conn_info)
 
   ncount <- nrow(data)
   max_Id = meta_maxId(conn = conn,FTableName=FTableName)
   data_id = data.frame(FInterId = 1:ncount+max_Id)
   data2 = cbind(data_id,data)
   tsda::db_writeTable(conn = conn,table_name = FTableName,r_object = data2,append = T)
+  tsda::conn_close(conn)
   return(data2)
 
 }

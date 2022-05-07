@@ -5,13 +5,13 @@
 \title{属性选项查询}
 \usage{
 propValue_queryDetail(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   FPrdCategoryNumber = "1.1.1.001",
   FPropCategoryNumber = "AF"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接设置}
 
 \item{FPrdCategoryNumber}{产品大类代码}
 

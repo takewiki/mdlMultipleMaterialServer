@@ -4,12 +4,12 @@
 \alias{prdSel_query}
 \title{属性类别查询}
 \usage{
-prdSel_query(conn = tsda::conn_rds("cprds"), FNumber = "")
+prdSel_query(conn_cfg = "config/conn_cfg.R", FNumber = "")
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接文件}
 
-\item{FNumber}{}
+\item{FNumber}{代码}
 }
 \value{
 返回值

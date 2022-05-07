@@ -1,18 +1,19 @@
 #' 读取属性选项数据
 #'
-#' @param conn  连接
 #' @param file_name 文件名
 #' @param sheet_name 页签表
+#' @param conn_cfg 连接文件设置
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' propValue_read()
-propValue_read <- function(conn=tsda::conn_rds('cprds'),
+propValue_read <- function(conn_cfg ='config/conn_cfg.R'
+                           ,
                               file_name ='data-raw/data/属性选项模板.xlsx',
                               sheet_name ="属性选项") {
-  res <- data_read2(conn=conn,
+  res <- data_read2(conn_cfg = conn_cfg,
                     file_name =file_name,
                     sheet_name =sheet_name,
                     table_name = 'rds_mtrl_propValue',
@@ -21,20 +22,25 @@ propValue_read <- function(conn=tsda::conn_rds('cprds'),
                     table_caption = '属性类别代码',
                     table_caption2 = '属性代码',
                     pageCount=500)
-  return(res)
+
   return(res)
 }
 
 
 #' 属性选项查询
 #'
-#' @param conn 连接
+#' @param conn_cfg 连接设置
 #'
 #' @return 返回值
 #'
 #' @examples
 #' propValue_query()
-propValue_query <- function(conn=tsda::conn_rds('cprds')) {
+propValue_query <- function(conn_cfg ='config/conn_cfg.R'
+
+) {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+conn = tsda::conn_open(conn_config_info = conn_info)
+
 
   sql <- paste0("SELECT
       [属性类别代码]
@@ -45,6 +51,8 @@ propValue_query <- function(conn=tsda::conn_rds('cprds')) {
   FROM [vw_rds_mtrl_propValue]
   where 是否禁用 =0 order  by 属性类别代码, 属性代码")
   data = tsda::sql_select(conn,sql)
+  tsda::conn_close(conn)
+
   return(data)
 
 }
@@ -52,19 +60,23 @@ propValue_query <- function(conn=tsda::conn_rds('cprds')) {
 
 #' 属性选项查询
 #'
-#' @param conn 连接
 #' @param FPrdCategoryNumber 产品大类代码
 #' @param FPropCategoryNumber 产品属性代码
+#' @param conn_cfg 连接设置
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' propValue_queryDetail()
-propValue_queryDetail <- function(conn=tsda::conn_rds('cprds'),
+propValue_queryDetail <- function(conn_cfg = 'config/conn_cfg.R'
+                                  ,
                                   FPrdCategoryNumber ='1.1.1.001',
                                   FPropCategoryNumber ='AF'
                                   ) {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+conn = tsda::conn_open(conn_config_info = conn_info)
+
 
   sql <- paste0("SELECT
       FPropNumber
@@ -84,6 +96,8 @@ propValue_queryDetail <- function(conn=tsda::conn_rds('cprds'),
     res= list('')
     names(res) <- '无选项,请联系管理员'
   }
+  tsda::conn_close(conn)
+
   return(res)
 
 }
@@ -91,15 +105,19 @@ propValue_queryDetail <- function(conn=tsda::conn_rds('cprds'),
 
 #' 返回选项值
 #'
-#' @param conn 连接
 #' @param FPropNumber 选项代码
+#' @param conn_cfg 连接设置
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' propValue_queryByNumber()
-propValue_queryByNumber <- function(conn=tsda::conn_rds('cprds'),FPropNumber ='C000009') {
+propValue_queryByNumber <- function(conn_cfg = 'config/conn_cfg.R'
+                                    ,FPropNumber ='C000009') {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+conn = tsda::conn_open(conn_config_info = conn_info)
+
   if(FPropNumber == ''){
     res =''
   }else{
@@ -113,6 +131,7 @@ propValue_queryByNumber <- function(conn=tsda::conn_rds('cprds'),FPropNumber ='C
       res =''
     }
   }
+tsda::conn_close(conn)
 
 
   return(res)
@@ -193,6 +212,7 @@ propValueUIServer_sheet <- function(input,output,session){
 #'
 #' @param input 输入
 #' @param output 输出
+#' @param conn_cfg 连接设置
 #' @param session 会议
 #'
 #' @return 返回值
@@ -200,7 +220,9 @@ propValueUIServer_sheet <- function(input,output,session){
 #'
 #' @examples
 #' file_deal()
-propValueServer_read <- function(input,output,session) {
+propValueServer_read <- function(input,output,session,conn_cfg) {
+
+
   var_file_name  = tsui::var_file('propValue_upload_file')
   var_sheet_name =tsui::var_ListChoose1('propValue_sheets_lc1')
   shiny::observeEvent(input$propValue_upload_btn,{
@@ -208,7 +230,7 @@ propValueServer_read <- function(input,output,session) {
     print(file_name)
     sheet_name = var_sheet_name()
     print(sheet_name)
-    data = propValue_read(file_name = file_name ,sheet_name = sheet_name )
+    data = propValue_read(conn_cfg = conn_cfg,file_name = file_name ,sheet_name = sheet_name )
     print(data)
 
     ncount =nrow(data)
@@ -234,6 +256,7 @@ propValueServer_read <- function(input,output,session) {
 #'
 #' @param input 输入
 #' @param output 输出
+#' @param conn_cfg 连接设置
 #' @param session 会话
 #'
 #' @return 返回值
@@ -241,11 +264,11 @@ propValueServer_read <- function(input,output,session) {
 #'
 #' @examples
 #' propValueServer()
-propValueServer <- function(input,output,session){
+propValueServer <- function(input,output,session,conn_cfg){
 
   propValueServer_query(input,output,session)
   propValueUIServer_sheet(input,output,session)
-  propValueServer_read(input,output,session)
+  propValueServer_read(input,output,session,conn_cfg = conn_cfg)
 
 
 

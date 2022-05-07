@@ -4,10 +4,10 @@
 \alias{propCategoryConfig_query}
 \title{属性类别配置查询}
 \usage{
-propCategoryConfig_query(conn = tsda::conn_rds("cprds"))
+propCategoryConfig_query(conn_cfg = "config/conn_cfg.R")
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接配置}
 }
 \value{
 返回值

@@ -5,12 +5,12 @@
 \title{返回选项值}
 \usage{
 propValue_queryByNumber(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   FPropNumber = "C000009"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接设置}
 
 \item{FPropNumber}{选项代码}
 }

@@ -5,12 +5,14 @@
 \title{属性类别查询}
 \usage{
 propCategory_queryDetail(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   FPrdCategoryNumber = "1.1.1.001"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接}
+
+\item{FPrdCategoryNumber}{代码}
 }
 \value{
 返回值

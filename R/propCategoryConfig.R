@@ -1,18 +1,19 @@
 #' 读取属性类别数据
 #'
-#' @param conn  连接
 #' @param file_name 文件名
 #' @param sheet_name 页签表
+#' @param conn_cfg 连接设置
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' propCategoryConfig_read()
-propCategoryConfig_read <- function(conn=tsda::conn_rds('cprds'),
+propCategoryConfig_read <- function(conn_cfg ='config/conn_cfg.R'
+                                    ,
                               file_name ='data-raw/data/属性类别配置模板.xlsx',
                               sheet_name ="属性类别配置") {
-  res <- data_read2(conn=conn,
+  res <- data_read2(conn_cfg = conn_cfg,
                                          file_name =file_name,
                                          sheet_name =sheet_name,
                                          table_name = 'rds_mtrl_propCategoryConfig',
@@ -27,13 +28,16 @@ propCategoryConfig_read <- function(conn=tsda::conn_rds('cprds'),
 
 #' 属性类别配置查询
 #'
-#' @param conn 连接
+#' @param conn_cfg 连接配置
 #'
 #' @return 返回值
 #'
 #' @examples
 #' propCategoryConfig_query()
-propCategoryConfig_query <- function(conn=tsda::conn_rds('cprds')) {
+propCategoryConfig_query <- function(conn_cfg ='config/conn_cfg.R') {
+  conn_info = tsda::conn_config(config_file = conn_cfg)
+conn = tsda::conn_open(conn_config_info = conn_info)
+
 
   sql <- paste0("SELECT
       [产品大类代码]
@@ -44,6 +48,8 @@ propCategoryConfig_query <- function(conn=tsda::conn_rds('cprds')) {
   FROM  [vw_rds_mtrl_propCategoryConfig]
   where 是否禁用 =0 order  by 产品大类代码,物料属性类别代码 ")
   data = tsda::sql_select(conn,sql)
+  tsda::conn_close(conn)
+
   return(data)
 
 }
@@ -123,6 +129,7 @@ propCategoryConfigUIServer_sheet <- function(input,output,session){
 #'
 #' @param input 输入
 #' @param output 输出
+#' @param conn_cfg  连接配置
 #' @param session 会议
 #'
 #' @return 返回值
@@ -130,7 +137,7 @@ propCategoryConfigUIServer_sheet <- function(input,output,session){
 #'
 #' @examples
 #' file_deal()
-propCategoryConfigServer_read <- function(input,output,session) {
+propCategoryConfigServer_read <- function(input,output,session,conn_cfg ='config/conn_cfg.R') {
   var_file_name  = tsui::var_file('propCategoryConfig_upload_file')
   var_sheet_name =tsui::var_ListChoose1('propCategoryConfig_sheets_lc1')
   shiny::observeEvent(input$propCategoryConfig_upload_btn,{
@@ -138,7 +145,7 @@ propCategoryConfigServer_read <- function(input,output,session) {
     print(file_name)
     sheet_name = var_sheet_name()
     print(sheet_name)
-    data = propCategoryConfig_read(file_name = file_name ,sheet_name = sheet_name )
+    data = propCategoryConfig_read(conn_cfg = conn_cfg,file_name = file_name ,sheet_name = sheet_name )
     print(data)
 
     ncount =nrow(data)
@@ -165,17 +172,18 @@ propCategoryConfigServer_read <- function(input,output,session) {
 #' @param input 输入
 #' @param output 输出
 #' @param session 会话
+#' @param conn 连接
 #'
 #' @return 返回值
 #' @export
 #'
 #' @examples
 #' propCategoryConfigServer()
-propCategoryConfigServer <- function(input,output,session){
+propCategoryConfigServer <- function(input,output,session,conn){
 
   propCategoryConfigServer_query(input,output,session)
   propCategoryConfigUIServer_sheet(input,output,session)
-  propCategoryConfigServer_read(input,output,session)
+  propCategoryConfigServer_read(input,output,session,conn = conn)
 
 
 

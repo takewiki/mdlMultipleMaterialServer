@@ -5,13 +5,13 @@
 \title{设置下一个代码}
 \usage{
 prdGenRule_SetNextNumber(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   FPrdGroupNumber = "1.1.1.001.001",
   FNextNumber = 1
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接设置}
 
 \item{FPrdGroupNumber}{物料分组代码}
 

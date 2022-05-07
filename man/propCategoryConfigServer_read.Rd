@@ -4,7 +4,12 @@
 \alias{propCategoryConfigServer_read}
 \title{处理内容}
 \usage{
-propCategoryConfigServer_read(input, output, session)
+propCategoryConfigServer_read(
+  input,
+  output,
+  session,
+  conn_cfg = "config/conn_cfg.R"
+)
 }
 \arguments{
 \item{input}{输入}
@@ -12,6 +17,8 @@ propCategoryConfigServer_read(input, output, session)
 \item{output}{输出}
 
 \item{session}{会议}
+
+\item{conn_cfg}{连接配置}
 }
 \value{
 返回值

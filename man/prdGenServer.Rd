@@ -4,7 +4,7 @@
 \alias{prdGenServer}
 \title{处理逻辑}
 \usage{
-prdGenServer(input, output, session)
+prdGenServer(input, output, session, conn_cfg = "config/conn_cfg.R")
 }
 \arguments{
 \item{input}{输入}
@@ -12,6 +12,8 @@ prdGenServer(input, output, session)
 \item{output}{输出}
 
 \item{session}{会话}
+
+\item{conn_cfg}{连接文件}
 }
 \value{
 返回值

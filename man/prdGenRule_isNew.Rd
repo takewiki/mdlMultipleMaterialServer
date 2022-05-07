@@ -5,12 +5,14 @@
 \title{是否最新}
 \usage{
 prdGenRule_isNew(
-  conn = tsda::conn_rds("cprds"),
+  conn_cfg = "config/conn_cfg.R",
   FPrdGroupNumber = "1.1.1.001.001"
 )
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接配置}
+
+\item{FPrdGroupNumber}{分组代码}
 }
 \value{
 返回值

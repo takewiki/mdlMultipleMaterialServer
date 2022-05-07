@@ -106,6 +106,7 @@ prdGenServer_prdGroup <- function(input,output,session) {
 #'
 #' @param input 输入
 #' @param output 输出
+#' @param conn_cfg 连接文件
 #' @param session 会话
 #'
 #' @return 返回值
@@ -113,14 +114,14 @@ prdGenServer_prdGroup <- function(input,output,session) {
 #'
 #' @examples
 #' materialGeneratorServer()
-prdGenServer <- function(input,output,session) {
+prdGenServer <- function(input,output,session,conn_cfg='config/conn_cfg.R') {
 
 
   prdCategoryData <- shiny::eventReactive(input$prdGen_confirm_btn,{
     var_prdGen_prdCategory_placeholder <- tsui::var_ListChoose1('prdGen_parentCategory_lc1')
     FParentPrdCategory =var_prdGen_prdCategory_placeholder()
     print(FParentPrdCategory)
-    res <- prdCategory_queryByParent(FParentPrdCategory=FParentPrdCategory)
+    res <- prdCategory_queryByParent(conn_cfg = conn_cfg,FParentPrdCategory=FParentPrdCategory)
     return(res)
 
   })
@@ -139,7 +140,7 @@ prdGenServer <- function(input,output,session) {
     print(FPrdCategoryFNumber)
 
 
-    res <- prdGroup_queryDetail(FPrdCategoryFNumber=FPrdCategoryFNumber)
+    res <- prdGroup_queryDetail(conn_cfg = conn_cfg,FPrdCategoryFNumber=FPrdCategoryFNumber)
 
 
 
@@ -175,7 +176,7 @@ prdGenServer <- function(input,output,session) {
     print(FPrdCategoryFNumber)
 
 
-    res <- propCategory_queryDetail(FPrdCategoryNumber=FPrdCategoryFNumber)
+    res <- propCategory_queryDetail(conn_cfg = conn_cfg,FPrdCategoryNumber=FPrdCategoryFNumber)
 
 
 
@@ -193,7 +194,7 @@ prdGenServer <- function(input,output,session) {
         FPrdCategoryName = data$FPrdCategoryName[i]
         FPropCategoryNumber = data$FPropCategoryNumber[i]
         FPropCategoryName =   data$FPropCategoryName[i]
-        choices = propValue_queryDetail(FPrdCategoryNumber =FPrdCategoryNumber,FPropCategoryNumber =FPropCategoryNumber  )
+        choices = propValue_queryDetail(conn_cfg=conn_cfg,FPrdCategoryNumber =FPrdCategoryNumber,FPropCategoryNumber =FPropCategoryNumber  )
         shiny::selectizeInput(inputId = FPropCategoryNumber,label = FPropCategoryName,choices = choices)
 
 
@@ -229,7 +230,7 @@ prdGenServer <- function(input,output,session) {
               FPropCategoryNumber = data$FPropCategoryNumber[i]
               FPropCategoryName =   data$FPropCategoryName[i]
               FPropValueNumber = input[[FPropCategoryNumber]]
-              FPropValueName = propValue_queryByNumber(FPropNumber=FPropValueNumber)
+              FPropValueName = propValue_queryByNumber(conn_cfg = conn_cfg,FPropNumber=FPropValueNumber)
               res_FPropValueNumber[i] <<- FPropValueNumber
               res_FPropValueName[i] <<- FPropValueName
 
@@ -246,15 +247,15 @@ prdGenServer <- function(input,output,session) {
             data$FPropValueNameFlag = FPropValueNameFlag
             #openxlsx::write.xlsx(x = data,file = 'res_config.xlsx',overwrite = TRUE)
             #write into DB
-            flag_new_ConfigRes = prdConfigRes_isNew(FPrdGroupNumber =FPrdGroupNumber,FPropValueNumberFlag = FPropValueNumberFlag )
+            flag_new_ConfigRes = prdConfigRes_isNew(conn_cfg = conn_cfg,FPrdGroupNumber =FPrdGroupNumber,FPropValueNumberFlag = FPropValueNumberFlag )
             if(flag_new_ConfigRes){
               #如果选配结果已经存在,则不插入数据
-              data_upload(conn = tsda::conn_rds('cprds'),data = data,FTableName = 'rds_mtrl_prdConfigRes')
+              data_upload(conn_cfg = conn_cfg,data = data,FTableName = 'rds_mtrl_prdConfigRes')
             }
             #print(data)
             names(data) <-c('产品大类代码','产品大类名称','属性分类代码','属性类别名称','属性代码','属性名称','产品分组代码','产品分组名称','选配结果代码','选配结果名称')
             output$prdGen_ConfigRes_dt <- DT::renderDataTable(data)
-            res = prdGenList_upload(FPrdGroupNumber = FPrdGroupNumber,FPrdGroupName = FPrdGroupName,FPropValueNumberFlag = FPropValueNumberFlag,FPropValueNameFlag = FPropValueNameFlag)
+            res = prdGenList_upload(conn_cfg = conn_cfg,FPrdGroupNumber = FPrdGroupNumber,FPrdGroupName = FPrdGroupName,FPropValueNumberFlag = FPropValueNumberFlag,FPropValueNameFlag = FPropValueNameFlag)
             #print(res)
             # output$prdGen_list_dt <- DT::renderDataTable(res)
             # res

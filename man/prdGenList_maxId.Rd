@@ -4,10 +4,10 @@
 \alias{prdGenList_maxId}
 \title{获取最大号ID}
 \usage{
-prdGenList_maxId(conn = tsda::conn_rds("cprds"))
+prdGenList_maxId(conn_cfg = "config/conn_cfg.R")
 }
 \arguments{
-\item{conn}{连接}
+\item{conn_cfg}{连接文件}
 }
 \value{
 返回值

@@ -4,7 +4,7 @@
 \alias{propValueServer}
 \title{产品大娄的处理函数}
 \usage{
-propValueServer(input, output, session)
+propValueServer(input, output, session, conn_cfg)
 }
 \arguments{
 \item{input}{输入}
@@ -12,6 +12,8 @@ propValueServer(input, output, session)
 \item{output}{输出}
 
 \item{session}{会话}
+
+\item{conn_cfg}{连接设置}
 }
 \value{
 返回值
