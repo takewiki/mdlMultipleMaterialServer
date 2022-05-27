@@ -41,6 +41,8 @@ tabPanel_initial_Server <- function(input,output,session,conn_cfg,app_id='cpdms'
    where FappId ='",app_id,"' and Fpermissions ='",role_name,"' and Fshow = 1 and Fid ='mdlMultipleMaterialCom'
    order by Findex desc ")
   data = tsda::sql_select(conn,sql)
+  print(data)
+  print(role_name)
   ncount = nrow(data)
   if(ncount >0){
     for (i in 1:ncount) {
